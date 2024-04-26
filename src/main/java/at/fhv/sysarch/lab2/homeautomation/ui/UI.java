@@ -9,6 +9,7 @@ import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
 import at.fhv.sysarch.lab2.homeautomation.devices.AirCondition;
 import at.fhv.sysarch.lab2.homeautomation.devices.TemperatureSensor;
+import at.fhv.sysarch.lab2.homeautomation.domain.Temperature;
 
 import java.util.Optional;
 import java.util.Scanner;
@@ -55,7 +56,8 @@ public class UI extends AbstractBehavior<Void> {
             // TODO: change input handling
             String[] command = reader.split(" ");
             if(command[0].equals("t")) {
-                this.tempSensor.tell(new TemperatureSensor.ReadTemperature(Optional.of(Double.valueOf(command[1]))));
+                Temperature temperature = new Temperature(Double.valueOf(command[1]), "Celsius");
+                this.tempSensor.tell(new TemperatureSensor.ReadTemperature(Optional.of(temperature)));
             }
             if(command[0].equals("a")) {
                 this.airCondition.tell(new AirCondition.PowerAirCondition(Optional.of(Boolean.valueOf(command[1]))));

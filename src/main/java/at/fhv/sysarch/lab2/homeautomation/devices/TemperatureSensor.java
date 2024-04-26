@@ -7,6 +7,7 @@ import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
+import at.fhv.sysarch.lab2.homeautomation.domain.Temperature;
 
 import java.util.Optional;
 
@@ -15,10 +16,10 @@ public class TemperatureSensor extends AbstractBehavior<TemperatureSensor.Temper
     public interface TemperatureCommand {}
 
     public static final class ReadTemperature implements TemperatureCommand {
-        final Optional<Double> value;
+        private final Optional<Temperature> temperature;
 
-        public ReadTemperature(Optional<Double> value) {
-            this.value = value;
+        public ReadTemperature(Optional<Temperature> temperature) {
+            this.temperature = temperature;
         }
     }
 
@@ -47,9 +48,14 @@ public class TemperatureSensor extends AbstractBehavior<TemperatureSensor.Temper
                 .build();
     }
 
-    private Behavior<TemperatureCommand> onReadTemperature(ReadTemperature r) {
-        getContext().getLog().info("TemperatureSensor received {}", r.value.get());
-        this.airCondition.tell(new AirCondition.EnrichedTemperature(r.value, Optional.of("Celsius")));
+    private Behavior<TemperatureCommand> onReadTemperature(ReadTemperature readTemperature) {
+        if (!readTemperature.temperature.isPresent()) {
+            getContext().getLog().info("TemperatureSensor received no temperature");
+            return this;
+        }
+        Temperature temperature = readTemperature.temperature.get();
+        getContext().getLog().info("TemperatureSensor received {} {}", temperature.getValue(), temperature.getUnit());
+        this.airCondition.tell(new AirCondition.EnrichedTemperature(Optional.of(temperature.getValue()), Optional.of(temperature.getUnit())));
         return this;
     }
 
