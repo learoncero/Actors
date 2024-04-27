@@ -7,28 +7,48 @@ import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
-import at.fhv.sysarch.lab2.homeautomation.devices.AirCondition;
-import at.fhv.sysarch.lab2.homeautomation.devices.TemperatureSensor;
+import at.fhv.sysarch.lab2.homeautomation.devices.*;
 import at.fhv.sysarch.lab2.homeautomation.domain.Temperature;
+import at.fhv.sysarch.lab2.homeautomation.domain.Weather;
 
 import java.util.Optional;
 import java.util.Scanner;
 
 public class UI extends AbstractBehavior<Void> {
 
-    private ActorRef<TemperatureSensor.TemperatureCommand> tempSensor;
-    private ActorRef<AirCondition.AirConditionCommand> airCondition;
+    private final ActorRef<TemperatureSensor.TemperatureCommand> temperatureSensor;
+    private final ActorRef<WeatherSensor.WeatherCommand> weatherSensor;
+    private final ActorRef<AirCondition.AirConditionCommand> airCondition;
+    private final ActorRef<Blinds.BlindsCommand> blinds;
+    private final ActorRef<MediaStation.MediaStationCommand> mediaStation;
 
-    public static Behavior<Void> create(ActorRef<TemperatureSensor.TemperatureCommand> tempSensor, ActorRef<AirCondition.AirConditionCommand> airCondition) {
-        return Behaviors.setup(context -> new UI(context, tempSensor, airCondition));
+
+    public static Behavior<Void> create(
+            ActorRef<TemperatureSensor.TemperatureCommand> temperatureSensor,
+            ActorRef<WeatherSensor.WeatherCommand> weatherSensor,
+            ActorRef<AirCondition.AirConditionCommand> airCondition,
+            ActorRef<Blinds.BlindsCommand> blinds,
+            ActorRef<MediaStation.MediaStationCommand> mediaStation
+    ) {
+        return Behaviors.setup(context -> new UI(context, temperatureSensor, weatherSensor, airCondition, blinds, mediaStation));
     }
 
-    private  UI(ActorContext<Void> context, ActorRef<TemperatureSensor.TemperatureCommand> tempSensor, ActorRef<AirCondition.AirConditionCommand> airCondition) {
+    private  UI(
+            ActorContext<Void> context,
+            ActorRef<TemperatureSensor.TemperatureCommand> temperatureSensor,
+            ActorRef<WeatherSensor.WeatherCommand> weatherSensor,
+            ActorRef<AirCondition.AirConditionCommand> airCondition,
+            ActorRef<Blinds.BlindsCommand> blinds,
+            ActorRef<MediaStation.MediaStationCommand> mediaStation
+    ) {
         super(context);
-        // TODO: implement actor and behavior as needed
-        // TODO: move UI initialization to appropriate place
+
+        this.temperatureSensor = temperatureSensor;
+        this.weatherSensor = weatherSensor;
         this.airCondition = airCondition;
-        this.tempSensor = tempSensor;
+        this.blinds = blinds;
+        this.mediaStation = mediaStation;
+
         new Thread(() -> { this.runCommandLine(); }).start();
 
         getContext().getLog().info("UI started");
@@ -45,9 +65,7 @@ public class UI extends AbstractBehavior<Void> {
     }
 
     public void runCommandLine() {
-        // TODO: Create Actor for UI Input-Handling?
         Scanner scanner = new Scanner(System.in);
-        String[] input = null;
         String reader = "";
 
 
@@ -56,13 +74,36 @@ public class UI extends AbstractBehavior<Void> {
             // TODO: change input handling
             String[] command = reader.split(" ");
             if(command[0].equals("t")) {
-                Temperature temperature = new Temperature(Double.valueOf(command[1]), "Celsius");
-                this.tempSensor.tell(new TemperatureSensor.ReadTemperature(Optional.of(temperature)));
+                Temperature temperature = new Temperature(Double.valueOf(command[1]), String.valueOf(command[2]));
+                this.temperatureSensor.tell(new TemperatureSensor.ReadTemperatureCommand(Optional.of(temperature)));
+            }
+            if(command[0].equals("w")) {
+                Weather weather = Weather.valueOf(command[1].toUpperCase());
+                this.weatherSensor.tell(new WeatherSensor.ReadWeatherCommand(Optional.of(weather)));
             }
             if(command[0].equals("a")) {
-                this.airCondition.tell(new AirCondition.PowerAirCondition(Optional.of(Boolean.valueOf(command[1]))));
+                this.airCondition.tell(new AirCondition.PowerAirConditionCommand(Optional.of(Boolean.valueOf(command[1]))));
             }
-            // TODO: process Input
+            if(command[0].equals("m")) {
+                if(command[1].equals("play")) {
+                    this.mediaStation.tell(new MediaStation.PlayMediaCommand());
+                } else if(command[1].equals("stop")) {
+                    this.mediaStation.tell(new MediaStation.StopMediaCommand());
+                }
+            }
+
+            if(command[0].equals("stop")) {
+                getContext().getSystem().terminate();
+            }
+
+            if(command[0].equals("help")) {
+                System.out.println("Commands:");
+                System.out.println("t [temperature] [unit]              - Set temperature");
+                System.out.println("w [sunny|cloudy]                    - Set weather");
+                System.out.println("a [true|false]                      - Power on/off air condition");
+                System.out.println("m [play|stop]                       - Play/stop media");
+                System.out.println("quit                                - Quit application");
+            }
         }
         getContext().getLog().info("UI done");
     }

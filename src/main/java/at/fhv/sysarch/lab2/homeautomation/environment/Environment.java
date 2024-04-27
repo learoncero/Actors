@@ -61,7 +61,7 @@ public class Environment extends AbstractBehavior<Environment.EnvironmentCommand
     private final TimerScheduler<EnvironmentCommand> temperatureTimeScheduler;
     private final TimerScheduler<EnvironmentCommand> weatherTimeScheduler;
 
-    public static Behavior<EnvironmentCommand> create(ActorRef<TemperatureSensor.TemperatureCommand> temperatureSensor){
+    public static Behavior<EnvironmentCommand> create(){
         return Behaviors.setup(context ->  Behaviors.withTimers(timers -> new Environment(context, timers, timers)));
     }
 
@@ -69,8 +69,8 @@ public class Environment extends AbstractBehavior<Environment.EnvironmentCommand
         super(context);
         this.temperatureTimeScheduler = tempTimer;
         this.weatherTimeScheduler = weatherTimer;
-        this.temperatureTimeScheduler.startTimerAtFixedRate(new TemperatureChangeCommand(), Duration.ofSeconds(5));
-        this.weatherTimeScheduler.startTimerAtFixedRate(new WeatherChangeCommand(), Duration.ofSeconds(35));
+        this.temperatureTimeScheduler.startTimerAtFixedRate(new TemperatureChangeCommand(), Duration.ofSeconds(10));
+        this.weatherTimeScheduler.startTimerAtFixedRate(new WeatherChangeCommand(), Duration.ofSeconds(10));
     }
 
     @Override
@@ -93,7 +93,7 @@ public class Environment extends AbstractBehavior<Environment.EnvironmentCommand
 
         this.temperature = new Temperature(temperature.getValue() + change, temperature.getUnit());
 
-        getContext().getLog().info("Environment received {}", temperature);
+        getContext().getLog().info("Environment received {} {}", temperature.getValue(), temperature.getUnit());
 
         return this;
     }
@@ -125,12 +125,12 @@ public class Environment extends AbstractBehavior<Environment.EnvironmentCommand
     }
 
     private Behavior<EnvironmentCommand> onReceiveTemperatureRequest(ReceiveTemperatureRequestCommand request) {
-        request.temperatureSensor.tell(new TemperatureSensor.ReadTemperature(Optional.of(temperature)));
+        request.temperatureSensor.tell(new TemperatureSensor.ReadTemperatureCommand(Optional.of(temperature)));
         return this;
     }
 
     private Behavior<EnvironmentCommand> onReceiveWeatherRequest(ReceiveWeatherRequestCommand request) {
-        request.weatherSensor.tell(new WeatherSensor.ReadWeather(Optional.of(weather)));
+        request.weatherSensor.tell(new WeatherSensor.ReadWeatherCommand(Optional.of(weather)));
         return this;
     }
 
