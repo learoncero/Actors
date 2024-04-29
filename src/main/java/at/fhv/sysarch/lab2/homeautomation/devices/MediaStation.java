@@ -29,7 +29,7 @@ public class MediaStation extends AbstractBehavior<MediaStation.MediaStationComm
         return Behaviors.setup(context -> new MediaStation(context, blinds, groupId, deviceId));
     }
 
-    public MediaStation(
+    private MediaStation(
             ActorContext<MediaStation.MediaStationCommand> context,
             ActorRef<Blinds.BlindsCommand> blinds,
             String groupId,

@@ -37,7 +37,7 @@ public class WeatherSensor extends AbstractBehavior<WeatherSensor.WeatherCommand
         return Behaviors.setup(context -> Behaviors.withTimers(timer -> new WeatherSensor(context, Blinds, environment, groupId, deviceId, timer)));
     }
 
-    public WeatherSensor(
+    private WeatherSensor(
             ActorContext<WeatherSensor.WeatherCommand> context,
             ActorRef<Blinds.BlindsCommand> Blinds,
             ActorRef<Environment.EnvironmentCommand> environment,

@@ -34,7 +34,7 @@ public class Blinds extends AbstractBehavior<Blinds.BlindsCommand> {
         return Behaviors.setup(context -> new Blinds(context, groupId, deviceId));
     }
 
-    public Blinds(ActorContext<Blinds.BlindsCommand> context, String groupId, String deviceId) {
+    private Blinds(ActorContext<Blinds.BlindsCommand> context, String groupId, String deviceId) {
         super(context);
         this.groupId = groupId;
         this.deviceId = deviceId;

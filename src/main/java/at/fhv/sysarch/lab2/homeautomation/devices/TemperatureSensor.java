@@ -40,7 +40,7 @@ public class TemperatureSensor extends AbstractBehavior<TemperatureSensor.Temper
         return Behaviors.setup(context -> Behaviors.withTimers(timer -> new TemperatureSensor(context, airCondition, environment, groupId, deviceId, timer)));
     }
 
-    public TemperatureSensor(
+    private TemperatureSensor(
             ActorContext<TemperatureCommand> context,
             ActorRef<AirCondition.AirConditionCommand> airCondition,
             ActorRef<Environment.EnvironmentCommand> environment,

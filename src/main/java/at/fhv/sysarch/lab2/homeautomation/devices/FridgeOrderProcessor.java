@@ -8,6 +8,8 @@ import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Receive;
 import at.fhv.sysarch.lab2.homeautomation.domain.Product;
 
+import java.util.Optional;
+
 public class FridgeOrderProcessor extends AbstractBehavior<FridgeOrderProcessor.FridgeOrderProcessorCommand> {
     public interface FridgeOrderProcessorCommand {}
 
@@ -55,7 +57,7 @@ public class FridgeOrderProcessor extends AbstractBehavior<FridgeOrderProcessor.
         ));
     }
 
-    public FridgeOrderProcessor(
+    private FridgeOrderProcessor(
             ActorContext<FridgeOrderProcessorCommand> context,
             ActorRef<Fridge.FridgeCommand> fridge,
             ActorRef<FridgeSpaceSensor.FridgeSpaceSensorCommand> fridgeSpaceSensor,
@@ -98,7 +100,7 @@ public class FridgeOrderProcessor extends AbstractBehavior<FridgeOrderProcessor.
 
     private Behavior<FridgeOrderProcessorCommand> processOrder() {
         if (remainingSpace >= product.getSpace() && remainingWeight >= product.getWeight()) {
-            fridge.tell(new Fridge.ConsumeProductCommand(product));
+            fridge.tell(new Fridge.ConsumeProductCommand(Optional.of(product)));
         } else {
             getContext().getLog().info("Not enough space or weight to order product {} with space {} and weight {}", product.getName(), product.getSpace(), product.getWeight());
         }

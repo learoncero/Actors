@@ -36,7 +36,7 @@ public class FridgeSpaceSensor extends AbstractBehavior<FridgeSpaceSensor.Fridge
         return Behaviors.setup(context -> new FridgeSpaceSensor(context, usedSpace, groupId, deviceId));
     }
 
-    public FridgeSpaceSensor(
+    private FridgeSpaceSensor(
             ActorContext<FridgeSpaceSensor.FridgeSpaceSensorCommand> context,
             int usedSpace,
             String groupId,

@@ -56,8 +56,6 @@ public class Fridge extends AbstractBehavior<Fridge.FridgeCommand> {
     private final ActorRef<FridgeWeightSensor.FridgeWeightSensorCommand> fridgeWeightSensor;
 
     public static Behavior<Fridge.FridgeCommand> create(
-            ActorRef<FridgeSpaceSensor.FridgeSpaceSensorCommand> fridgeSpaceSensor,
-            ActorRef<FridgeWeightSensor.FridgeWeightSensorCommand> fridgeWeightSensor,
             String groupId,
             String deviceId
     ) {

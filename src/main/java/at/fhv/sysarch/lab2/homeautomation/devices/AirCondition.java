@@ -38,7 +38,7 @@ public class AirCondition extends AbstractBehavior<AirCondition.AirConditionComm
         return Behaviors.setup(context -> new AirCondition(context, groupId, deviceId));
     }
 
-    public AirCondition(ActorContext<AirConditionCommand> context, String groupId, String deviceId) {
+    private AirCondition(ActorContext<AirConditionCommand> context, String groupId, String deviceId) {
         super(context);
         this.groupId = groupId;
         this.deviceId = deviceId;

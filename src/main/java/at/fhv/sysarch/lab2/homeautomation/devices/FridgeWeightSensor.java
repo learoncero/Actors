@@ -36,7 +36,7 @@ public class FridgeWeightSensor extends AbstractBehavior<FridgeWeightSensor.Frid
         return Behaviors.setup(context -> new FridgeWeightSensor(context, usedWeight, groupId, deviceId));
     }
 
-    public FridgeWeightSensor(
+    private FridgeWeightSensor(
             ActorContext<FridgeWeightSensor.FridgeWeightSensorCommand> context,
             double usedWeight,
             String groupId,
