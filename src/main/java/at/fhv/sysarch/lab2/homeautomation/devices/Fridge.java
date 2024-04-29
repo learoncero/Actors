@@ -10,32 +10,34 @@ import akka.actor.typed.javadsl.Receive;
 import at.fhv.sysarch.lab2.homeautomation.domain.Order;
 import at.fhv.sysarch.lab2.homeautomation.domain.Product;
 
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Fridge extends AbstractBehavior<Fridge.FridgeCommand> {
     public interface FridgeCommand {}
 
     public static final class ConsumeProductCommand implements FridgeCommand {
-        Product product;
+        private final Optional<Product> product;
 
-        public ConsumeProductCommand(Product product) {
+        public ConsumeProductCommand(Optional<Product> product) {
             this.product = product;
         }
     }
 
     public static final class OrderProductCommand implements FridgeCommand {
-        Product product;
+        private final Optional<Product> product;
 
-        public OrderProductCommand(Product product) {
+        public OrderProductCommand(Optional<Product> product) {
             this.product = product;
         }
     }
 
     public static final class AddProductCommand implements FridgeCommand {
-        Product product;
+        private final Optional<Product> product;
 
-        public AddProductCommand(Product product) {
+        public AddProductCommand(Optional<Product> product) {
             this.product = product;
         }
     }
@@ -112,43 +114,71 @@ public class Fridge extends AbstractBehavior<Fridge.FridgeCommand> {
     }
 
     private Behavior<FridgeCommand> onConsumeProduct(ConsumeProductCommand consumeProductCommand) {
-        if (products.contains(consumeProductCommand.product)) {
-            products.remove(consumeProductCommand.product);
-            getContext().getLog().info("Product {} consumed", consumeProductCommand.product.getName());
+        Product product;
+
+        if (consumeProductCommand.product.isPresent()) {
+            product = consumeProductCommand.product.get();
+        } else {
+            getContext().getLog().info("Product not found in consume command");
+            return this;
+        }
+
+        if (products.contains(product)) {
+            products.remove(product);
+            getContext().getLog().info("Product {} consumed", product.getName());
             fridgeSpaceSensor.tell(new FridgeSpaceSensor.SpaceChangedCommand(products.size()));
             fridgeWeightSensor.tell(new FridgeWeightSensor.WeightChangedCommand(getUsedWeight()));
 
             if (!products.contains(consumeProductCommand.product)) {
-                getContext().getLog().info("Product {} out of stock, placing order.", consumeProductCommand.product.getName());
+                getContext().getLog().info("Product {} out of stock, placing order.", product.getName());
                 getContext().getSelf().tell(new OrderProductCommand(consumeProductCommand.product));
             }
         } else {
-            getContext().getLog().info("Product {} not found in fridge", consumeProductCommand.product.getName());
+            getContext().getLog().info("Product {} not found in fridge", product.getName());
         }
 
         return this;
     }
 
     private Behavior<FridgeCommand> onOrderProduct(OrderProductCommand orderProductCommand) {
-        getContext().spawn(FridgeOrderProcessor.create(getContext().getSelf(), fridgeSpaceSensor, fridgeWeightSensor, orderProductCommand.product, "1", "1"), "FridgeOrderProcessor-" + orderProductCommand.product.getName());
+        Product product;
+
+        if (orderProductCommand.product.isPresent()) {
+            product = orderProductCommand.product.get();
+        } else {
+            getContext().getLog().info("Product not found in order command");
+            return this;
+        }
+
+        getContext().spawn(FridgeOrderProcessor.create(getContext().getSelf(), fridgeSpaceSensor, fridgeWeightSensor,
+                product, "1", "1"), "FridgeOrderProcessor-" + product.getName());
 
         return this;
     }
 
     private Behavior<FridgeCommand> onAddProduct(AddProductCommand addProductCommand) {
-        products.add(addProductCommand.product);
+        Product product;
+
+        if (addProductCommand.product.isPresent()) {
+            product = addProductCommand.product.get();
+        } else {
+            getContext().getLog().info("Product not found in add product command");
+            return this;
+        }
+
+        products.add(product);
         fridgeSpaceSensor.tell(new FridgeSpaceSensor.SpaceChangedCommand(products.size()));
         fridgeWeightSensor.tell(new FridgeWeightSensor.WeightChangedCommand(getUsedWeight()));
-        getContext().getLog().info("Product {} added to fridge", addProductCommand.product.getName());
+        getContext().getLog().info("Product {} added to fridge", product.getName());
 
-        Order order = new Order(addProductCommand.product);
+        Order order = new Order(product);
         orders.add(order);
 
         System.out.println("\nReceipt:\n" +
                 "Order ID \t" + order.getId() + "\n" +
                 "Date \t" + order.getOrderDate() + "\n" +
-                "Product \t" + addProductCommand.product.getName() + "\n" +
-                "Total \t€" + addProductCommand.product.getPrice() + "\n");
+                "Product \t" + product.getName() + "\n" +
+                "Total \t€" + product.getPrice() + "\n");
 
         return this;
     }
