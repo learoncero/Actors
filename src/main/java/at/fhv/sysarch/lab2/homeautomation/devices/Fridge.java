@@ -66,7 +66,7 @@ public class Fridge extends AbstractBehavior<Fridge.FridgeCommand> {
         ));
     }
 
-    public Fridge(
+    private Fridge(
             ActorContext<FridgeCommand> context,
             String groupId,
             String deviceId) {
