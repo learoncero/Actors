@@ -102,7 +102,7 @@ public class UI extends AbstractBehavior<Void> {
                 System.out.println("w [sunny|cloudy]                    - Set weather");
                 System.out.println("a [true|false]                      - Power on/off air condition");
                 System.out.println("m [play|stop]                       - Play/stop media");
-                System.out.println("quit                                - Quit application");
+                System.out.println("stop                                - Stop application");
             }
         }
         getContext().getLog().info("UI done");
