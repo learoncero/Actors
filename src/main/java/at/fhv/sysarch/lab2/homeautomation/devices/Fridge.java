@@ -9,8 +9,6 @@ import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
 import at.fhv.sysarch.lab2.homeautomation.domain.Order;
 import at.fhv.sysarch.lab2.homeautomation.domain.Product;
-
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -129,7 +127,7 @@ public class Fridge extends AbstractBehavior<Fridge.FridgeCommand> {
 
             if (!products.contains(product)) {
                 getContext().getLog().info("Product {} out of stock, placing order.", product.getName());
-                getContext().getSelf().tell(new OrderProductCommand(consumeProductCommand.product));
+                getContext().getSelf().tell(new OrderProductCommand(Optional.of(product)));
             }
         } else {
             getContext().getLog().info("Product {} not found in fridge", product.getName());
@@ -177,7 +175,6 @@ public class Fridge extends AbstractBehavior<Fridge.FridgeCommand> {
                 "Date \t" + order.getOrderDate() + "\n" +
                 "Product \t" + product.getName() + "\n" +
                 "Total \t€" + product.getPrice() + "\n");
-
         return this;
     }
 
