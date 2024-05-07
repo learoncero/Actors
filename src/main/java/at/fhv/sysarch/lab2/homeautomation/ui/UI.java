@@ -82,102 +82,108 @@ public class UI extends AbstractBehavior<Void> {
 
         while (!reader.equalsIgnoreCase("quit") && scanner.hasNextLine()) {
             reader = scanner.nextLine();
-            // TODO: change input handling
             String[] command = reader.split(" ");
-            if(command[0].equals("et")) {
-                Temperature temperature = new Temperature(Double.parseDouble(command[1]), "Celsius");
-                this.environment.tell(new Environment.SetTemperatureCommand(temperature));
-            }
-            if(command[0].equals("ew")) {
-                Weather weather = Weather.valueOf(command[1].toUpperCase());
-                this.environment.tell(new Environment.SetWeatherCommand(weather));
-            }
-            if(command[0].equals("a")) {
-                this.airCondition.tell(new AirCondition.PowerAirConditionCommand(Optional.of(Boolean.valueOf(command[1]))));
-            }
-            if(command[0].equals("m")) {
-                if(command[1].equals("play")) {
-                    this.mediaStation.tell(new MediaStation.PlayMediaCommand());
-                } else if(command[1].equals("stop")) {
-                    this.mediaStation.tell(new MediaStation.StopMediaCommand());
+            switch(command[0]) {
+                case "et": {
+                    Temperature temperature = new Temperature(Double.parseDouble(command[1]), "Celsius");
+                    this.environment.tell(new Environment.SetTemperatureCommand(temperature));
+                    break;
                 }
-            }
-            if (command[0].equals("fc")) {
-                Product product;
-                switch (command[1]) {
-                    case "milk":
-                        product = new Product("Milk", 1.70, 2.1);
-                        break;
-                    case "eggs":
-                        product = new Product("Eggs", 3.50, 0.5);
-                        break;
-                    case "beer":
-                        product = new Product("Beer", 18.50, 20);
-                        break;
-                    default:
-                        System.out.println("Invalid Product. Type 'help' if you want to see valid input options.");
-                        return;
+                case "ew": {
+                    Weather weather = Weather.valueOf(command[1].toUpperCase());
+                    this.environment.tell(new Environment.SetWeatherCommand(weather));
+                    break;
                 }
-                this.fridge.tell(new Fridge.ConsumeProductCommand(Optional.of(product)));
-            }
-            if(command[0].equals("fo")){
-                Product product;
-                switch (command[1]) {
-                    case "milk":
-                        product = new Product("Milk", 1.70, 2.1);
-                        break;
-                    case "eggs":
-                        product = new Product("Eggs", 3.50, 0.5);
-                        break;
-                    case "beer":
-                        product = new Product("Beer", 18.50, 20);
-                        break;
-                    default:
-                        System.out.println("Invalid Product. Type 'help' if you want to see valid input options.");
-                        return;
+                case "a": {
+                    this.airCondition.tell(new AirCondition.PowerAirConditionCommand(Optional.of(Boolean.valueOf(command[1]))));
+                    break;
                 }
-                this.fridge.tell(new Fridge.OrderProductCommand(Optional.of(product)));
-            }
-            if(command[0].equals("fa")) {
-                Product product;
-                switch (command[1]) {
-                    case "milk":
-                        product = new Product("Milk", 1.70, 2.1);
-                        break;
-                    case "eggs":
-                        product = new Product("Eggs", 3.50, 0.5);
-                        break;
-                    case "beer":
-                        product = new Product("Beer", 18.50, 20);
-                        break;
-                    default:
-                        System.out.println("Invalid Product. Type 'help' if you want to see valid input options.");
-                        return;
+                case "m": {
+                    if(command[1].equals("play")) {
+                        this.mediaStation.tell(new MediaStation.PlayMediaCommand());
+                    } else if(command[1].equals("stop")) {
+                        this.mediaStation.tell(new MediaStation.StopMediaCommand());
+                    }
+                    break;
                 }
-                this.fridge.tell(new Fridge.AddProductCommand(Optional.of(product)));
-            }
-            if(command[0].equals("foh")) {
-                this.fridge.tell(new Fridge.OrderHistoryCommand());
-            }
-            if (command[0].equals("fs")){
-                this.fridge.tell(new Fridge.QueryStockCommand());
-            }
-            if(command[0].equals("stop")) {
-                getContext().getSystem().terminate();
-            }
-
-            if(command[0].equals("help")) {
-                System.out.println("Commands:");
-                System.out.println("et [temperature]              - Set temperature in Celsius");
-                System.out.println("ew [sunny|cloudy]             - Set weather");
-                System.out.println("fc [milk|eggs|beer]           - Consume product of choide");
-                System.out.println("fo [milk|eggs|beer]           - Order product of choide");
-                System.out.println("fa [milk|eggs|beer]           - Add product of choide to fridge");
-                System.out.println("foh                           - Display order history");
-                System.out.println("fs                            - Display products in fridge");
-                System.out.println("a [true|false]                - Power on/off air condition");
-                System.out.println("m [play|stop]                 - Play/stop media");
-                System.out.println("stop                          - Stop application");
+                case "fc": {
+                    if (command.length < 2) {
+                        System.out.println("Please specify a product (milk, eggs, beer) and reenter the whole command.");
+                    } else {
+                        Product product;
+                        switch (command[1]) {
+                            case "milk":
+                                product = new Product("Milk", 1.70, 2.1);
+                                this.fridge.tell(new Fridge.ConsumeProductCommand(Optional.of(product)));
+                                break;
+                            case "eggs":
+                                product = new Product("Eggs", 3.50, 0.5);
+                                this.fridge.tell(new Fridge.ConsumeProductCommand(Optional.of(product)));
+                                break;
+                            case "beer":
+                                product = new Product("Beer", 18.50, 20);
+                                this.fridge.tell(new Fridge.ConsumeProductCommand(Optional.of(product)));
+                                break;
+                            default:
+                                System.out.println("Invalid Product. Type 'help' if you want to see valid input options.");
+                                return;
+                        }
+                    }
+                }
+                case "fo": {
+                    if (command.length < 2) {
+                        System.out.println("Please specify a product (milk, eggs, beer) and reenter the whole command.");
+                    } else {
+                        Product product;
+                        switch (command[1]) {
+                            case "milk":
+                                product = new Product("Milk", 1.70, 2.1);
+                                this.fridge.tell(new Fridge.OrderProductCommand(Optional.of(product)));
+                                break;
+                            case "eggs":
+                                product = new Product("Eggs", 3.50, 0.5);
+                                this.fridge.tell(new Fridge.OrderProductCommand(Optional.of(product)));
+                                break;
+                            case "beer":
+                                product = new Product("Beer", 18.50, 20);
+                                this.fridge.tell(new Fridge.OrderProductCommand(Optional.of(product)));
+                                break;
+                            default:
+                                System.out.println("Invalid Product. Type 'help' if you want to see valid input options.");
+                                break;
+                        }
+                    }
+                    break;
+                }
+                case "foh": {
+                    this.fridge.tell(new Fridge.OrderHistoryCommand());
+                    break;
+                }
+                case "fs": {
+                    this.fridge.tell(new Fridge.QueryStockCommand());
+                    break;
+                }
+                case "stop": {
+                    getContext().getSystem().terminate();
+                    break;
+                }
+                case "help": {
+                    System.out.println("Commands:");
+                    System.out.println("et [temperature]              - Set temperature in Celsius");
+                    System.out.println("ew [sunny|cloudy]             - Set weather");
+                    System.out.println("fc [milk|eggs|beer]           - Consume product of choice");
+                    System.out.println("fo [milk|eggs|beer]           - Order product of choice");
+                    System.out.println("foh                           - Display order history");
+                    System.out.println("fs                            - Display products in fridge");
+                    System.out.println("a [true|false]                - Power on/off air condition");
+                    System.out.println("m [play|stop]                 - Play/stop media");
+                    System.out.println("stop                          - Stop application");
+                    break;
+                }
+                default: {
+                    System.out.println("Unknown command. Please enter 'help' for valid commands.");
+                    break;
+                }
             }
         }
         getContext().getLog().info("UI done");
