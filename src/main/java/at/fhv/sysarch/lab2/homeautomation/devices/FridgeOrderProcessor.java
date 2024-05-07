@@ -89,18 +89,22 @@ public class FridgeOrderProcessor extends AbstractBehavior<FridgeOrderProcessor.
     }
 
     private Behavior<FridgeOrderProcessorCommand> onGetRemainingSpace(GetRemainingSpaceCommandAnswer getRemainingSpaceCommandAnswer) {
-        remainingSpace = getRemainingSpaceCommandAnswer.remainingSpace;
+        this.remainingSpace = getRemainingSpaceCommandAnswer.remainingSpace;
         return processOrder();
     }
 
     private Behavior<FridgeOrderProcessorCommand> onGetRemainingWeight(GetRemainingWeightCommandAnswer getRemainingWeightCommandAnswer) {
-        remainingWeight = getRemainingWeightCommandAnswer.remainingWeight;
+        this.remainingWeight = getRemainingWeightCommandAnswer.remainingWeight;
         return processOrder();
     }
 
     private Behavior<FridgeOrderProcessorCommand> processOrder() {
+        /*System.out.println("RemainingSpace: " + remainingSpace + ", " +
+                "RemainingWeight: " + remainingWeight);
+        System.out.println("ProductSpace: " + product.getSpace() + ", " +
+                "ProductWeight: " + product.getWeight());*/
         if (remainingSpace >= product.getSpace() && remainingWeight >= product.getWeight()) {
-            fridge.tell(new Fridge.ConsumeProductCommand(Optional.of(product)));
+            fridge.tell(new Fridge.AddProductCommand(Optional.of(product)));
         } else {
             getContext().getLog().info("Not enough space or weight to order product {} with space {} and weight {}", product.getName(), product.getSpace(), product.getWeight());
         }
