@@ -127,7 +127,7 @@ public class Fridge extends AbstractBehavior<Fridge.FridgeCommand> {
             fridgeSpaceSensor.tell(new FridgeSpaceSensor.SpaceChangedCommand(products.size()));
             fridgeWeightSensor.tell(new FridgeWeightSensor.WeightChangedCommand(getUsedWeight()));
 
-            if (!products.contains(consumeProductCommand.product)) {
+            if (!products.contains(product)) {
                 getContext().getLog().info("Product {} out of stock, placing order.", product.getName());
                 getContext().getSelf().tell(new OrderProductCommand(consumeProductCommand.product));
             }
