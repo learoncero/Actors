@@ -52,8 +52,9 @@ public class Blinds extends AbstractBehavior<Blinds.BlindsCommand> {
     }
 
     private Behavior<BlindsCommand> onOpenBlinds(OpenBlindsCommand r) {
-
-        if (this.state == BlindsState.CLOSED) {
+        if(this.isMediaPlaying && this.state == BlindsState.CLOSED) {
+            getContext().getLog().info("Media is playing so blinds will stay closed");
+        }else if (this.state == BlindsState.CLOSED) {
             getContext().getLog().info("Opening blinds");
             this.state = BlindsState.OPEN;
         }
@@ -62,7 +63,6 @@ public class Blinds extends AbstractBehavior<Blinds.BlindsCommand> {
     }
 
     private Behavior<BlindsCommand> onCloseBlinds(CloseBlindsCommand r) {
-
         if (this.state == BlindsState.OPEN) {
             getContext().getLog().info("Closing blinds");
             this.state = BlindsState.CLOSED;
