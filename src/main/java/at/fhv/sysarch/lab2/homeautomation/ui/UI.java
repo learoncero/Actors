@@ -75,12 +75,13 @@ public class UI extends AbstractBehavior<Void> {
         return this;
     }
 
+    private boolean isRunning = true;
     public void runCommandLine() {
         Scanner scanner = new Scanner(System.in);
         String reader = "";
 
 
-        while (!reader.equalsIgnoreCase("quit") && scanner.hasNextLine()) {
+        while (isRunning && scanner.hasNextLine()) {
             reader = scanner.nextLine();
             String[] command = reader.split(" ");
             switch(command[0]) {
@@ -126,9 +127,10 @@ public class UI extends AbstractBehavior<Void> {
                                 break;
                             default:
                                 System.out.println("Invalid Product. Type 'help' if you want to see valid input options.");
-                                return;
+                                break;
                         }
                     }
+                    break;
                 }
                 case "fo": {
                     if (command.length < 2) {
@@ -163,10 +165,6 @@ public class UI extends AbstractBehavior<Void> {
                     this.fridge.tell(new Fridge.QueryStockCommand());
                     break;
                 }
-                case "stop": {
-                    getContext().getSystem().terminate();
-                    break;
-                }
                 case "help": {
                     System.out.println("Commands:");
                     System.out.println("et [temperature]              - Set temperature in Celsius");
@@ -180,12 +178,17 @@ public class UI extends AbstractBehavior<Void> {
                     System.out.println("stop                          - Stop application");
                     break;
                 }
+                case "stop": {
+                    isRunning = false;
+                    break;
+                }
                 default: {
                     System.out.println("Unknown command. Please enter 'help' for valid commands.");
                     break;
                 }
             }
         }
+        getContext().getSystem().terminate();
         getContext().getLog().info("UI done");
     }
 }
