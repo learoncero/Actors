@@ -99,10 +99,6 @@ public class FridgeOrderProcessor extends AbstractBehavior<FridgeOrderProcessor.
     }
 
     private Behavior<FridgeOrderProcessorCommand> processOrder() {
-        /*System.out.println("RemainingSpace: " + remainingSpace + ", " +
-                "RemainingWeight: " + remainingWeight);
-        System.out.println("ProductSpace: " + product.getSpace() + ", " +
-                "ProductWeight: " + product.getWeight());*/
         if (remainingSpace >= product.getSpace() && remainingWeight >= product.getWeight()) {
             fridge.tell(new Fridge.AddProductCommand(Optional.of(product)));
         } else {

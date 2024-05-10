@@ -23,7 +23,6 @@ public class UI extends AbstractBehavior<Void> {
     private final ActorRef<Blinds.BlindsCommand> blinds;
     private final ActorRef<Fridge.FridgeCommand> fridge;
     private final ActorRef<MediaStation.MediaStationCommand> mediaStation;
-    //private final ActorRef<TemperatureSensor.TemperatureCommand> temperatureSensor;
     private final ActorRef<WeatherSensor.WeatherCommand> weatherSensor;
 
 
@@ -34,7 +33,6 @@ public class UI extends AbstractBehavior<Void> {
             ActorRef<Blinds.BlindsCommand> blinds,
             ActorRef<Fridge.FridgeCommand> fridge,
             ActorRef<MediaStation.MediaStationCommand> mediaStation,
-            //ActorRef<TemperatureSensor.TemperatureCommand> temperatureSensor,
             ActorRef<WeatherSensor.WeatherCommand> weatherSensor
     ) {
         return Behaviors.setup(context -> new UI(context, environment, airCondition, blinds, fridge, mediaStation, weatherSensor));
@@ -47,7 +45,6 @@ public class UI extends AbstractBehavior<Void> {
             ActorRef<Blinds.BlindsCommand> blinds,
             ActorRef<Fridge.FridgeCommand> fridge,
             ActorRef<MediaStation.MediaStationCommand> mediaStation,
-            //ActorRef<TemperatureSensor.TemperatureCommand> temperatureSensor,
             ActorRef<WeatherSensor.WeatherCommand> weatherSensor
     ) {
         super(context);
@@ -57,7 +54,6 @@ public class UI extends AbstractBehavior<Void> {
         this.blinds = blinds;
         this.fridge = fridge;
         this.mediaStation = mediaStation;
-        //this.temperatureSensor = temperatureSensor;
         this.weatherSensor = weatherSensor;
 
         new Thread(() -> { this.runCommandLine(); }).start();
