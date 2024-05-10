@@ -1,5 +1,7 @@
 package at.fhv.sysarch.lab2.homeautomation.domain;
 
+import java.util.Objects;
+
 public class Product {
     private String name;
     private double price;
@@ -27,5 +29,27 @@ public class Product {
 
     public double getSpace() {
         return space;
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "name='" + name + '\'' +
+                ", price=" + price +
+                ", weight=" + weight +
+                ", space=" + space +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Product other = (Product) obj;
+        return Objects.equals(name, other.name);
     }
 }

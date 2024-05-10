@@ -50,7 +50,7 @@ public class WeatherSensor extends AbstractBehavior<WeatherSensor.WeatherCommand
         this.environment = environment;
         this.groupId = groupId;
         this.deviceId = deviceId;
-        weatherTimeScheduler.startTimerAtFixedRate(new RequestWeatherFromEnvironmentCommand(), java.time.Duration.ofSeconds(10));
+        weatherTimeScheduler.startTimerAtFixedRate(new RequestWeatherFromEnvironmentCommand(), java.time.Duration.ofSeconds(60));
 
         getContext().getLog().info("WeatherSensor started");
     }

@@ -29,7 +29,7 @@ public class FridgeWeightSensor extends AbstractBehavior<FridgeWeightSensor.Frid
 
     private final String groupId;
     private final String deviceId;
-    private double maxWeight = 30;
+    private double maxWeight = 50;
     private double usedWeight;
 
     public static Behavior<FridgeWeightSensor.FridgeWeightSensorCommand> create(double usedWeight, String groupId, String deviceId) {
@@ -65,6 +65,7 @@ public class FridgeWeightSensor extends AbstractBehavior<FridgeWeightSensor.Frid
 
     private Behavior<FridgeWeightSensorCommand> onWeightChanged(WeightChangedCommand weightChangedCommand) {
         usedWeight = weightChangedCommand.weight;
+        getContext().getLog().info("FridgeWeightSensor weight changed to {}", weightChangedCommand.weight);
         return this;
     }
 

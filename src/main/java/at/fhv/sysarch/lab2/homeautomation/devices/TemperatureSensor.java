@@ -53,7 +53,7 @@ public class TemperatureSensor extends AbstractBehavior<TemperatureSensor.Temper
         this.environment = environment;
         this.groupId = groupId;
         this.deviceId = deviceId;
-        temperatureTimeScheduler.startTimerAtFixedRate(new RequestTemperatureFromEnvironmentCommand(), Duration.ofSeconds(10));
+        temperatureTimeScheduler.startTimerAtFixedRate(new RequestTemperatureFromEnvironmentCommand(), Duration.ofSeconds(60));
 
         getContext().getLog().info("TemperatureSensor started");
     }
