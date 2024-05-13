@@ -3,8 +3,8 @@
 3. Inser commands in command line
 
 # Possible commands
-## Command            | Action
----------------------|------------------------------------
+## Command           | Action
+---------------------|:------------------------------------
 help                 | Show all commands
 et [temperature]     | Set temperature in Celsius
 ew [sunny|cloudy]    | Set weather
