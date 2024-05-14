@@ -1,6 +1,6 @@
 1. Load the gradle project
 2. Build the project
-3. Inser commands in command line
+3. Insert commands in command line
 
 # Possible commands
 | Command           | Action                              |
