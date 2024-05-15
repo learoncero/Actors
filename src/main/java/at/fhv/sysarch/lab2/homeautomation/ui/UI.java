@@ -163,7 +163,7 @@ public class UI extends AbstractBehavior<Void> {
                 }
                 case "help": {
                     System.out.println("Commands:");
-                    System.out.println("et [temperature]              - Set temperature in Celsius");
+                    System.out.println("et [temperature]              - Set temperature in Celsius (ie. 21.3)");
                     System.out.println("ew [sunny|cloudy]             - Set weather");
                     System.out.println("fc [milk|eggs|beer]           - Consume product of choice");
                     System.out.println("fo [milk|eggs|beer]           - Order product of choice");
